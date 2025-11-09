@@ -16,20 +16,32 @@
         </ul>
       </nav>
     </header>
-    <main id="content"></main>
+    <main>
+      <!--PDF BLOCK-->
+      <div id="pdf" class="tab-content">
+        <h2>PDF Section</h2>
+        <p>Here you can upload or view PDFs</p>
+      </div>
+
+      <!--POWERPOINT BLOCK-->
+      <div id="ppt" class="tab-content" style="display:none">
+        <h2>PowerPoint Section</h2>
+        <p>PowerPoint content here</p>
+      </div>
+
+      <!--EXCEL BLOCK-->
+      <div id="excel" class="tab-content" style="display:none">
+        <h2>Excel Section</h2>
+        <p>Excel content here</p>
+      </div>
+    </main>
 
     <script>
       function showTab(tab) {
-        const content = document.getElementById("content");
-        if(tab === "pdf") {
-          content.innerHTML = "<h2>PDF Section</h2><p>Here you can upload or view PDFs</p>";
-        } else if(tab === "ppt") {
-          content.innerHTML = "<h2>PowerPoint Section</h2><p>PowerPoint content here</p>";
-        } else if(tab === "excel") {
-          content.innerHTML = "<h2>Excel Section</h2><p>Excel content here</p>";
-        }
+        const tabs = document.querySelectorAll(".tab-content");
+        tabs.forEach(t => t.style.display = "none");
+        document.getElementById(tab).style.display = "block";
       }
-
       showTab("pdf");
     </script>
   </body>
