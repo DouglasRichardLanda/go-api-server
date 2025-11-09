@@ -20,8 +20,35 @@
       <!--PDF BLOCK-->
       <div id="pdf" class="tab-content">
         <h2>PDF Section</h2>
-        <p>Here you can upload or view PDFs</p>
+        <p>Upload one or more PDF files:</p>
+        <form id="pdfForm" action="http://localhost:8085/api/pdf/merge" method="post" enctype="multipart/form-data">
+          <input type="file" id="pdfFiles" name="pdfFiles" accept="application/pdf" multiple>
+          <button type="submit">Merge and Download</button>
+        </form>
+        <div id="pdfPreview"></div>
       </div>
+      <script>
+              const pdfInput = document.getElementById("pdfFiles");
+              const pdfPreview = document.getElementById("pdfPreview");
+
+              pdfInput.addEventListener("change", () => {
+                pdfPreview.innerHTML = ""; // Clear previous previews
+                Array.from(pdfInput.files).forEach(file => {
+                  const fileDiv = document.createElement("div");
+                  fileDiv.textContent = `File: ${
+
+        file.name
+
+        } (${
+
+        Math.round(file.size / 1024)
+
+        } KB)`;
+                  pdfPreview.appendChild(fileDiv);
+                });
+              });
+      </script>
+      <!--END PDF BLOCK-->
 
       <!--POWERPOINT BLOCK-->
       <div id="ppt" class="tab-content" style="display:none">
