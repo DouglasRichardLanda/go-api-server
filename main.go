@@ -9,7 +9,7 @@ func main ()  {
 	const PORT = 8085
 	multiplekser := http.NewServeMux();
 
-	multiplekser.Handle("/api/", http.StripPrefix("/api", ApiRouter()))
+	multiplekser.Handle("/api/pdf/", http.StripPrefix("/api/pdf", PDFHandlerRouter()))
 
 	fmt.Printf("✅ Server started successfully on port %d\n", PORT)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", PORT), multiplekser); err != nil {
