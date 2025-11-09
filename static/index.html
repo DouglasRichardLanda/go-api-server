@@ -8,45 +8,98 @@
   </head>
   <body>
     <header>
-      <nav>
-        <ul style="list-style:none; display:flex; gap:20px; padding:0;">
-          <li><a href="#" onclick="showTab('pdf')">PDF</a></li>
-          <li><a href="#" onclick="showTab('ppt')">PowerPoint</a></li>
-          <li><a href="#" onclick="showTab('excel')">Excel</a></li>
+      <nav style="background-color: #eee; padding: 20px 0;">
+        <ul style="list-style:none; display:flex; gap:10px; padding:0; margin:0;">
+          <li>
+            <a href="#" onclick="showTab('pdf')"
+               id="tab-pdf"
+               style="border: 1px solid black; display:flex; align-items:center; justify-content:center; width:200px; height:50px; background-color:white; color:black; text-decoration:none; cursor:pointer;">
+              PDF
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showTab('ppt')"
+               id="tab-ppt"
+               style="border: 1px solid black; display:flex; align-items:center; justify-content:center; width:200px; height:50px; background-color:gray; color:black; text-decoration:none; cursor:pointer;">
+              PowerPoint
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showTab('excel')"
+               id="tab-excel"
+               style="border: 1px solid black; display:flex; align-items:center; justify-content:center; width:200px; height:50px; background-color:gray; color:black; text-decoration:none; cursor:pointer;">
+              Excel
+            </a>
+          </li>
         </ul>
       </nav>
+
     </header>
     <main>
       <!--PDF BLOCK-->
       <div id="pdf" class="tab-content">
         <h2>PDF Section</h2>
-        <p>Upload one or more PDF files:</p>
+        <p style="letter-spacing: 3px; font-weight: bold">Upload multiple PDF to merge them into a single one:</p>
         <form id="pdfForm" action="http://localhost:8085/api/pdf/merge" method="post" enctype="multipart/form-data">
           <input type="file" id="pdfFiles" name="pdfFiles" accept="application/pdf" multiple>
           <button type="submit">Merge and Download</button>
         </form>
         <div id="pdfPreview"></div>
+
+        <div style="width: 100%; border-top: 2px dotted #888; margin: 50px 0;"></div>
+
+        <p style="letter-spacing: 3px; font-weight: bold">Upload a PDF for resolution check:</p>
+        <form id="resolutionForm" enctype="multipart/form-data">
+          <label for="pdfFile">Select PDF:</label>
+          <input type="file" id="pdfFile" name="pdfFile" accept="application/pdf" required>
+
+          <label for="maxWidth">Max width (px):</label>
+          <input type="number" id="maxWidth" name="maxWidth" placeholder="2000" required>
+
+          <label for="maxHeight">Max height (px):</label>
+          <input type="number" id="maxHeight" name="maxHeight" placeholder="2000" required>
+
+          <button type="submit">Check</button>
+        </form>
+
+        <div id="result"></div>
+
       </div>
+      <!--script for merging upload-->
       <script>
-              const pdfInput = document.getElementById("pdfFiles");
-              const pdfPreview = document.getElementById("pdfPreview");
+        const pdfInput = document.getElementById("pdfFiles");
+        const pdfPreview = document.getElementById("pdfPreview");
 
-              pdfInput.addEventListener("change", () => {
-                pdfPreview.innerHTML = ""; // Clear previous previews
-                Array.from(pdfInput.files).forEach(file => {
-                  const fileDiv = document.createElement("div");
-                  fileDiv.textContent = `File: ${
+        pdfInput.addEventListener("change", () => {
+          pdfPreview.innerHTML = ""; // Clear previous previews
+          Array.from(pdfInput.files).forEach(file => {
+            const fileDiv = document.createElement("div");
+            fileDiv.textContent = `File: ${
 
-        file.name
+                        file.name
+                } (${
 
-        } (${
+                        Math.round(file.size / 1024)
+                } KB)`;
+            pdfPreview.appendChild(fileDiv);
+          });
+        });
+      </script>
+      <!--script for resolution check-->
+      <script>
+        document.getElementById("resolutionForm").addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-        Math.round(file.size / 1024)
+          const formData = new FormData(this);
 
-        } KB)`;
-                  pdfPreview.appendChild(fileDiv);
-                });
-              });
+          const res = await fetch("http://localhost:8085/api/pdf/merge", {
+            method: "POST",
+            body: formData
+          });
+
+          const text = await res.text();
+          document.getElementById("result").innerText = text; // show server response
+        });
       </script>
       <!--END PDF BLOCK-->
 
@@ -65,9 +118,13 @@
 
     <script>
       function showTab(tab) {
-        const tabs = document.querySelectorAll(".tab-content");
-        tabs.forEach(t => t.style.display = "none");
-        document.getElementById(tab).style.display = "block";
+        const tabs = ['pdf', 'ppt', 'excel'];
+        tabs.forEach(t => {
+          // tab colors
+          document.getElementById('tab-' + t).style.backgroundColor = t === tab ? 'white' : '#ccc';
+          // content visibility
+          document.getElementById(t).style.display = t === tab ? 'block' : 'none';
+        });
       }
       showTab("pdf");
     </script>
